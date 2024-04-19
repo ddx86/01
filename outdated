@@ -1,0 +1,66 @@
+months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+]
+
+
+def main():
+
+    while True:
+        try:
+            date_input = input("Date: ")
+
+            if date_input[0].isalpha():
+                if convert_alpha(date_input):
+                    break
+
+            elif date_input[0].isdigit():
+                if convert_digit(date_input):
+                    break
+
+        except ValueError:
+            pass
+
+
+def convert_alpha(m):
+    month, day_with_comma, year = m.split(" ")
+    month_new = int(months.index(month)) + 1
+    day = day_with_comma.rstrip(",")
+
+    if len(str(month_new)) == 1:
+        month_new = '0' + str(month_new)
+    if len(day) == 1:
+        day = '0' + day
+
+    if 1 <= int(month_new) <= 12 and 1 <= int(day) <= 31:
+        print(year, month_new, day, sep="-")
+        return True
+    else:
+        return False
+
+def convert_digit(x):
+    month, day, year = x.split("/")
+
+    if len(month) == 1:
+        month = '0' + month
+
+    if len(day) == 1:
+        day = '0' + day
+
+    if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
+        print(year, month, day, sep="-")
+        return True
+    else:
+        return False
+
+main()
