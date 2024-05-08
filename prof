@@ -1,0 +1,85 @@
+import random
+
+# Prompts the user to solve each of those problems.
+# If an answer is not correct (or not even a number), the program should output EEE and prompt the user again,
+# allowing the user up to three tries in total for that problem.
+# If the user has still not answered correctly after three tries, the program should output the correct answer.
+
+# The program should ultimately output the user’s score: the number of correct answers out of 10.
+
+
+def main():
+
+    correct_answers = 0  # counter of correct answers
+    level = get_level()
+
+    for problems_counter in range(1, 11):    # 10 problems cycle
+
+        wrong_answers = 0   # counter resets every time loop restarts
+
+        # assigning random numbers
+        x, y = generate_integer(level)
+        equation = int(x + y)   # answer to the equation
+
+        problem = f"{x} + {y} = "   # problem as a string
+        print(problem, end="")  # prints problem
+
+        while wrong_answers < 3:    # handling correct & wrong answers
+            try:    # using try to handle ValueErrors
+                answer = int(input())   # input answer as an int
+
+                if equation == answer:  # handling correct answer
+                    correct_answers += 1    # increasing correct answer counter
+                    break
+
+                else:
+                    raise ValueError    # handling wrong answers same as ValueErrors
+
+            except ValueError:
+                print("EEE")
+                wrong_answers += 1  # increasing wrong answer counter
+
+                if wrong_answers < 3:   # letting user re-try the problem 3 times
+                    print(problem, end="")
+                else:
+                    print(problem, equation)    # after 3 wrong answers: showing correct answer
+
+    print("Score: ", correct_answers)
+
+
+#  Prompts the user for a level. If the user does not input 1, 2, or 3, the program should prompt again.
+#  prompts (and, if need be, re-prompts) the user for a level and returns 1, 2, or 3
+
+def get_level():
+    while True:
+        try:
+            level = int(input("Level: "))
+            if 0 < level < 4:
+                return level
+            else:
+                continue
+
+        except ValueError:
+            continue
+
+# returns a randomly generated non-negative integer with level digits or raises a ValueError if level is not 1, 2, or 3
+# Randomly generates ten (10) math problems formatted as X + Y = ,
+# wherein each of X and Y is a non-negative integer with digits. No need to support operations other than addition (+).
+
+
+def generate_integer(level):
+
+    if level == 1:
+        x = random.randint(0, 9)
+        y = random.randint(0, 9)
+    elif level == 2:
+        x = random.randint(10, 99)
+        y = random.randint(10, 99)
+    else:
+        x = random.randint(100, 999)
+        y = random.randint(100, 999)
+    return x, y
+
+
+if __name__ == "__main__":
+    main()
