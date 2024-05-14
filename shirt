@@ -1,0 +1,41 @@
+import sys
+from PIL import Image, ImageOps
+from os.path import splitext
+
+def main():
+    try:
+        cmd_check()
+
+        # getting images
+        under_shirt = Image.open(sys.argv[1])
+        over_shirt = Image.open("shirt.png")
+
+        size = over_shirt.size  # getting the size
+        resized_img = ImageOps.fit(under_shirt, size)  # resizing
+        resized_img.paste(over_shirt, over_shirt)  # Paste shirt over base
+        resized_img.save(sys.argv[2])  # Save the resulting image
+
+    except FileNotFoundError:
+        sys.exit("File does not exist")
+
+
+def cmd_check():
+    if len(sys.argv) < 3:
+        sys.exit("Too-few command line arguments")
+    elif len(sys.argv) > 3:
+        sys.exit("Too-many command line arguments")
+
+    input_ext = splitext(sys.argv[1])[1].lower()
+    output_ext = splitext(sys.argv[2])[1].lower()
+
+    valid_ext = {".jpg", ".jpeg", ".png"}
+
+    if input_ext not in valid_ext or output_ext not in valid_ext:
+        sys.exit("Invalid input")
+
+    if input_ext != output_ext:
+        sys.exit("Input and output have different extensions")
+
+
+if __name__ == '__main__':
+    main()
