@@ -1,0 +1,239 @@
+import sys
+
+
+class Cauldron:
+    ingredients = [
+        "water", "dried mint", "moonstone dust", "powdered ginger", "honey", "dried valerian root"
+    ]
+    default_size = 5
+    default_material = "iron"
+    default_contents = "empty"
+
+    def __init__(self, contents=None, direction="none", counts=0) -> None:
+        self.state_boiled = 0
+        self.contents = contents
+        if self.contents is None:
+            self.contents = []
+        self.state_heat = 0
+        self.state_stirred = [direction, counts]
+
+    def add_ingredient(self, n):
+        self.contents.append(Cauldron.ingredients[int(n)])
+
+    def heat(self, strength):
+        # low/mid/high heat 1 2 3
+        self.state_heat = strength
+
+    def stir(self, direction, counts):
+        # clockwise or counterclockwise for N-times
+        # returns tuple if you want list put [] around
+        self.state_stirred = direction, counts
+
+    def boil(self, t):
+        self.state_boiled += t
+
+
+cauldron: Cauldron = Cauldron()
+
+check_ff = [False] * 5  # initializing check for "Felix Felicis"
+check_cfb = [False] * 4  # initializing check for "Cure for Boils"
+check_sd = [False] * 4  # initializing check for "Sleeping Draught"
+
+while True:
+    while True:
+        print()
+        print("Potions 101")
+        print()
+        print("(A)dd Ingredients")
+        print("(B)oil")
+        print("(H)eat Cauldron")
+        print("(S)tir Cauldron")
+        print("(R)ead the Book of Potions")
+        print("Start (O)ver")
+        print("(E)xit")
+
+        # Menu options
+
+        starting = input("What would you like to do? ")
+        print()
+        if starting.lower() not in "abhsroe" or starting.lower() == "":
+            print("* Choose one of the menu items to continue * ")
+            break
+
+        # Adding ingredients
+        if starting.lower() == "a":
+            try:
+                print("What ingredient would you like to add?")
+                for i in range(len(Cauldron.ingredients)):
+                    print(f"({i}) {Cauldron.ingredients[i]}")
+                ingredient = input("Choose one: ")
+                if -1 < int(ingredient) < 6:
+                    cauldron.add_ingredient(int(ingredient))
+                else:
+                    print()
+                    print("* input should be a digit from the menu *")
+                    print()
+                    break
+            except ValueError:
+                print()
+                print("* input should be a digit from the menu *")
+                print()
+
+        # Boiling
+        try:
+            if starting.lower() == "b":
+                boil_time = int(input("How long do you want to boil your potion for?"))
+                cauldron.boil(boil_time)
+                print(f"You have cooked the potion for {boil_time} minutes")
+        except ValueError:
+            print()
+            print("* input should be a number of minutes *")
+            print()
+
+        # Heating the Cauldron
+        if starting.lower() == "h":
+            try:
+                print("How strong do you want the flame to be? ")
+                print("(1) Low")
+                print("(2) Medium")
+                print("(3) High")
+                heat_strength = int(input())
+                if 0 < int(heat_strength) < 4:
+                    cauldron.heat(heat_strength)
+                    print(f"The fire is at level {heat_strength}")
+                else:
+                    print()
+                    print("* input should be a number from 1 to 3 *")
+                    print()
+                    break
+            except ValueError:
+                print()
+                print("* input should be a number from 1 to 3 *")
+                print()
+
+        # Stirring the Cauldron
+        try:
+            if starting.lower() == "s":
+                print("What direction do you want to stir? ")
+                print("(1) Clockwise")
+                print("(2) Counter-Clockwise")
+                stir_direction = int(input())
+                if 0 < int(stir_direction) < 3:
+                    try:
+                        stir_times = int(input("How many times do you want to stir? "))
+                        cauldron.stir(stir_direction, stir_times)
+                        print(f"stirred for {stir_times} times")
+                    except ValueError:
+                        print()
+                        print("* input should be a number *")
+                        print()
+                else:
+                    print()
+                    print("* input should be a number 1 or 2 *")
+                    print()
+        except ValueError:
+            print()
+            print("* input should be a number 1 or 2 *")
+            print()
+
+    # Reading Potions Book
+        if starting.lower() == "r":
+            with open('potionsbook.txt', 'r') as file:
+                content = file.read()
+                print(content)
+
+        # Starting Over
+        if starting.lower() == "o":
+            # set everything to default
+            cauldron.state_boiled = 0
+            cauldron.contents = []
+            cauldron.state_heat = 0
+            cauldron.state_stirred = ["direction", "counts"]
+
+        # Exiting the game
+        if starting.lower() == "e":
+            sys.exit("Exit")
+
+# *********** Potions Start ***********
+
+        # FIRST POTION Felix Felicis (Liquid Luck)
+
+        # checking the recipe
+        if cauldron.contents == ["water"]:
+            check_ff[0] = True
+            print("first ingredient check")
+        if check_ff[0]:
+            if cauldron.contents == ["water", "dried mint"]:
+                check_ff[1] = True
+                print("second ingredient check")
+        if check_ff[1]:
+            if cauldron.state_heat == 1:
+                check_ff[2] = True
+                print("heat check")
+        if check_ff[2]:
+            if cauldron.state_stirred == (1, 7):
+                check_ff[3] = True
+                print("stirred check")
+        if check_ff[3]:
+            if cauldron.contents == ["water", "dried mint", "moonstone dust"]:
+                check_ff[4] = True
+                print("third ingredient check")
+        if check_ff[4]:
+            if cauldron.state_stirred == (2, 3):
+                print("*****************************************")
+                print("Congratulations!")
+                print("You have completed: Felix Felicis potion")
+                print("*****************************************")
+                input("press enter to continue")
+
+        # SECOND POTION Cure for Boils
+
+        # checking the recipe
+        if cauldron.contents == ["water"]:
+            check_cfb[0] = True
+            print("first ingredient check")
+        if check_cfb[0]:
+            if cauldron.contents == ["water", "powdered ginger"]:
+                check_cfb[1] = True
+                print("second ingredient check")
+        if check_cfb[1]:
+            if cauldron.contents == ["water", "powdered ginger", "honey"]:
+                check_cfb[2] = True
+                print("third ingredient check")
+        if check_cfb[2]:
+            if cauldron.state_heat == 3:
+                check_cfb[3] = True
+                print("heat check")
+        if check_cfb[3]:
+            if cauldron.state_stirred == (1, 5):
+                print("*****************************************")
+                print("Congratulations!")
+                print("You have completed: Cure for Boils potion")
+                print("*****************************************")
+                input("press enter to continue")
+
+        # THIRD POTION Sleeping Draught
+
+        # checking the recipe
+        if cauldron.contents == ["water"]:
+            check_sd[0] = True
+            print("first ingredient check")
+        if check_sd[0]:
+            if cauldron.contents == ["water", "dried valerian root"]:
+                check_sd[1] = True
+                print("second ingredient check")
+        if check_sd[1]:
+            if cauldron.contents == ["water", "dried valerian root", "moonstone dust"]:
+                check_sd[2] = True
+                print("third ingredient check")
+        if check_sd[2]:
+            if cauldron.state_heat == 1:
+                check_sd[3] = True
+                print("heat check")
+        if check_sd[3]:
+            if cauldron.state_stirred == (2, 3):
+                print("*****************************************")
+                print("Congratulations!")
+                print("You have completed: Sleeping Draught Potion")
+                print("*****************************************")
+                input("press enter to continue")
